@@ -22,9 +22,17 @@ namespace UserWindow
     {
         public string Answer { get { return txtUserName.Text; } }
 
-        public Dialoge()
+        public Dialoge(string sort)
         {
             InitializeComponent();
+
+            if (sort == "c")
+            {
+                btnConfirm.Content = "Create";
+            } else
+            {
+                btnConfirm.Content = "Update";
+            }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -36,6 +44,11 @@ namespace UserWindow
         {
             txtUserName.SelectAll();
             txtUserName.Focus();
+        }
+
+        private void CancelAction(object sender, RoutedEventArgs e)
+        {
+            this.DialogResult = false;
         }
     }
 }

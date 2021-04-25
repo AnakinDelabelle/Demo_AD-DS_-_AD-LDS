@@ -48,7 +48,7 @@ namespace WpfApp1
         private void CreateUserAction(object sender, RoutedEventArgs e)
         {
 
-            Dialoge w = new Dialoge();
+            Dialoge w = new Dialoge("c");
             w.ShowDialog();
             if (w.DialogResult == true)
             {
@@ -98,7 +98,7 @@ namespace WpfApp1
         {
             if (fieldResults.SelectedIndex != -1)
             {
-                Dialoge w = new Dialoge();
+                Dialoge w = new Dialoge("u");
                 w.ShowDialog();
 
                 if (w.DialogResult == true)

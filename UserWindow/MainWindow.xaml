@@ -10,7 +10,8 @@
     <Grid Margin="0,0,2,5">
         <TextBox x:Name="txtUserName" HorizontalAlignment="Left" Height="22" Margin="85,63,-221,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="136"/>
         <Label Content="Name" HorizontalAlignment="Left" Margin="5,59,-80,0" VerticalAlignment="Top" Width="75"/>
-        <Button Content="Create" HorizontalAlignment="Left" Margin="76,114,0,0" VerticalAlignment="Top" Width="91" RenderTransformOrigin="0.111,0.533" Height="34" Click="Button_Click"/>
+        <Button x:Name="btnCancel" Content="Cancel" HorizontalAlignment="Left" Margin="32,116,0,0" VerticalAlignment="Top" Width="91" RenderTransformOrigin="0.111,0.533" Height="34" Click="CancelAction"/>
+        <Button x:Name="btnConfirm" Content="v" HorizontalAlignment="Left" Margin="130,116,0,0" VerticalAlignment="Top" Width="91" RenderTransformOrigin="0.111,0.533" Height="34" Click="Button_Click"/>
 
     </Grid>
 </Window>
