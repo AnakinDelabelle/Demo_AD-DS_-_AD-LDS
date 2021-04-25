@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,6 +34,7 @@ namespace WpfApp1
             Program = new Program();
             Program.Binding(Connection.LOCAL);
             lblCurrent.Content = "Current Connection: LOCAL";      //LOCAL or LDAP
+            btnCreateUser.IsEnabled = btnDeleteUser.IsEnabled = btnUpdateUser.IsEnabled = false;
         }
 
         private void GetAllUsersAction(object sender, RoutedEventArgs e)
@@ -40,7 +42,7 @@ namespace WpfApp1
             fieldResults.Items.Clear();
             List<Users> l = Program.GetADUsers();
             l.ForEach(x => fieldResults.Items.Add(x));
-            btnDeleteUser.IsEnabled = false;
+            btnCreateUser.IsEnabled = btnDeleteUser.IsEnabled = btnUpdateUser.IsEnabled = true;
         }
 
         private void CreateUserAction(object sender, RoutedEventArgs e)
@@ -50,7 +52,11 @@ namespace WpfApp1
             w.ShowDialog();
             if (w.DialogResult == true)
             {
-                Program.CreateUser(w.Answer);
+                if (Program.CreateUser(w.Answer))
+                {
+                    MessageBox.Show("User succesfully created!");
+                    btnCreateUser.IsEnabled = btnDeleteUser.IsEnabled = btnUpdateUser.IsEnabled = false;
+                }
             }
         }
 
@@ -68,11 +74,47 @@ namespace WpfApp1
                 Program.Binding(Connection.LOCAL);
                 lblCurrent.Content = "Current Connection: LOCAL";
             }
+            btnCreateUser.IsEnabled = btnDeleteUser.IsEnabled = btnUpdateUser.IsEnabled = false;
         }
 
         private void DeleteUserAction(object sender, RoutedEventArgs e)
         {
+            if (fieldResults.SelectedIndex != -1)
+            {
+                Debug.WriteLine(fieldResults.SelectedValue.ToString());
+                if (Program.DeleteUser(fieldResults.SelectedValue.ToString()))
+                {
+                    MessageBox.Show("User succesfully deleted!");
+                    btnCreateUser.IsEnabled = btnDeleteUser.IsEnabled = btnUpdateUser.IsEnabled = false;
+                }   
+            }
+            else
+            {
+                MessageBox.Show("Select a user first!");
+            }
+        }
 
+        private void UpdateUserAction(object sender, RoutedEventArgs e)
+        {
+            if (fieldResults.SelectedIndex != -1)
+            {
+                Dialoge w = new Dialoge();
+                w.ShowDialog();
+
+                if (w.DialogResult == true)
+                {
+                    Debug.WriteLine(fieldResults.SelectedValue.ToString());
+                    if (Program.UpdateUser(fieldResults.SelectedValue.ToString(), w.Answer))
+                    {
+                        MessageBox.Show("User succesfully updated!");
+                        btnCreateUser.IsEnabled = btnDeleteUser.IsEnabled = btnUpdateUser.IsEnabled = false;
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Select a user first!");
+            }
         }
     }
 }

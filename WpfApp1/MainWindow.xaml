@@ -10,11 +10,12 @@
         <Button x:Name="btnGetAll" Content="Get All Users" HorizontalAlignment="Left" Margin="478,46,0,0" VerticalAlignment="Top" Width="134" Height="51" Click="GetAllUsersAction"/>
 
 
-        <Button x:Name="btnCreateUser" Content="Create User" HorizontalAlignment="Left" Margin="478,115,0,0" VerticalAlignment="Top" Width="134" Height="51" Click="CreateUserAction"/>
+        <Button x:Name="btnCreateUser" Content="Create User" HorizontalAlignment="Left" Margin="478,124,0,0" VerticalAlignment="Top" Width="134" Height="51" Click="CreateUserAction"/>
         <ListBox x:Name="fieldResults" HorizontalAlignment="Left" Margin="43,46,0,0" VerticalAlignment="Top" Width="365" Height="345"/>
-        <Button x:Name="btnDeleteUser" Content="Delete User" HorizontalAlignment="Left" Margin="478,186,0,0" VerticalAlignment="Top" Width="134" Height="50" Click="DeleteUserAction"/>
+        <Button x:Name="btnDeleteUser" Content="Delete User" HorizontalAlignment="Left" Margin="478,180,0,0" VerticalAlignment="Top" Width="134" Height="50" Click="DeleteUserAction"/>
         <Button x:Name="btnChangeConnection" Content="Change Connection" HorizontalAlignment="Left" Margin="478,310,0,0" VerticalAlignment="Top" Width="134" Height="50" Click="ChangeConnectionAction"/>
         <Label x:Name="lblCurrent" Content="Current Connection:" HorizontalAlignment="Left" Margin="430,365,0,0" VerticalAlignment="Top" FontSize="16"/>
+        <Button x:Name="btnUpdateUser" Content="Update User" HorizontalAlignment="Left" Margin="478,235,0,0" VerticalAlignment="Top" Width="134" Height="50" Click="UpdateUserAction"/>
 
     </Grid>
 </Window>

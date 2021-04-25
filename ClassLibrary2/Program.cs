@@ -11,6 +11,7 @@ namespace Lib
     {
         public DirectoryEntry RootOU { get; set; }
         public Connection Connection { get; set; }
+        public DirectorySearcher Searcher { get; set; }
 
         public void Binding(Connection conn)
         {
@@ -39,25 +40,6 @@ namespace Lib
 
         }
 
-        public void GetAllUsers()
-        {
-            SearchResultCollection results;
-
-            DirectorySearcher ds = new DirectorySearcher(RootOU);
-            ds.Filter = "(&(objectCategory=User)(objectClass=person))";
-
-            results = ds.FindAll();
-
-            Debug.WriteLine("Get all users");
-            Debug.WriteLine(results.Count);
-            foreach (SearchResult sr in results)
-            {
-                //Using the index zero 9à0 is required1
-                Debug.WriteLine(sr.Properties["name"][0].ToString());
-            }
-        }
-
-
         public static void Main(string[] args)
         {
             Debug.WriteLine("Start Program");
@@ -76,32 +58,85 @@ namespace Lib
         }
 
 
-        public void CreateUser(string name)
+        public bool CreateUser(string name)
         {
-            DirectoryEntry objUser;
-            string displayName;
-            string user;
-            string userName;
+            try
+            {
+                DirectoryEntry objUser;
+                string displayName;
+                string user;
+                string userName;
 
-            //Refresh the AD LDS object
-            //RootOU.RefreshCache();
+                //Refresh the AD LDS object
+                //RootOU.RefreshCache();
 
-            //Create user info
-            user = $"CN={name}";
-            userName = $"{name}@anakin.be";
-            displayName = $"{name}";
+                //Create user info
+                user = $"CN={name}";
+                userName = $"{name}@anakin.be";
+                displayName = $"{name}";
 
-            //Create User object
-            objUser = RootOU.Children.Add(user, "user");
-            objUser.Properties["displayName"].Add(displayName);
-            objUser.Properties["userPrincipalName"].Add(userName);
-            Debug.WriteLine(objUser.Path);
-            objUser.CommitChanges();
+                //Create User object
+                objUser = RootOU.Children.Add(user, "user");
+                objUser.Properties["displayName"].Add(displayName);
+                objUser.Properties["userPrincipalName"].Add(userName);
+                Debug.WriteLine(objUser.Path);
+                objUser.CommitChanges();
 
-            Debug.WriteLine("User Creation Succeeded!");
+                Debug.WriteLine("User Creation Succeeded!");
+                return true;
+            }
+            catch (Exception)
+            {
+
+                return false;
+            }
         }
 
+        public bool DeleteUser(string name)
+        {
+            try
+            {
+                DirectoryEntry objUser = RootOU.Children.Find($"CN={name.Substring(14)}");
+                Console.WriteLine($"{objUser.SchemaClassName}: \"{objUser.Name}\" is found in the Container!");
+                RootOU.Children.Remove(objUser);
+                Console.WriteLine("User succesfully deleted!");
+                return true;
+            }
+            catch (Exception)
+            {
 
+                return false;
+            }
+        }
+
+        public bool UpdateUser(string name, string newName)
+        {
+            try
+            {
+                Searcher = new DirectorySearcher(RootOU);
+                Searcher.Filter = $"(&(objectCategory=Person)(cn={name.Substring(14)}))";
+
+                Searcher.PropertiesToLoad.Add("displayname");
+                SearchResult sr = Searcher.FindOne();
+                var objUser = sr.GetDirectoryEntry();
+
+                Console.WriteLine($"{objUser.SchemaClassName}: \"{objUser.Name}\" is found in the Container!");
+
+                objUser.Rename("CN="+newName);
+                objUser.Properties["displayname"][0] = $"{newName}";
+
+                objUser.UsePropertyCache = true;
+                objUser.CommitChanges();
+
+                Console.WriteLine("User succesfully updated!");
+                return true;
+            }
+            catch (Exception)
+            {
+
+                return false;
+            }
+        }
 
         public List<Users> GetADUsers()
         {
@@ -109,13 +144,13 @@ namespace Lib
             {
                 List<Users> lstADUsers = new List<Users>();
 
-                DirectorySearcher search = new DirectorySearcher(RootOU);
-                search.Filter = "(&(objectCategory=Person)(objectClass=user))";
+                Searcher = new DirectorySearcher(RootOU);
+                Searcher.Filter = "(&(objectCategory=Person)(objectClass=user))";
 
-                search.PropertiesToLoad.Add("displayname");
+                Searcher.PropertiesToLoad.Add("displayname");
 
                 SearchResult result;
-                SearchResultCollection resultCol = search.FindAll();
+                SearchResultCollection resultCol = Searcher.FindAll();
                 if (resultCol != null)
                 {
                     for (int counter = 0; counter < resultCol.Count; counter++)
@@ -139,8 +174,6 @@ namespace Lib
             {
                 return null;
             }
-
-
         }
     }
 }
