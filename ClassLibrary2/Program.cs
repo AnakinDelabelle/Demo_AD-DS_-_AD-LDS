@@ -21,7 +21,7 @@ namespace Lib
 
             if (conn == Connection.LOCAL)
             {
-                RootOU = new DirectoryEntry
+                RootOU = new DirectoryEntry             //SSL on AD DS is standard
                     ("LDAP://dc1.anakin.local/CN=Users,DC=anakin,DC=local",
                     "Administrator",
                     "Student1",
@@ -29,9 +29,9 @@ namespace Lib
                     );
             }
             if (conn == Connection.LDAP)
-            {
+            {                                           //SSL connection on port 50001 with ldp.exe works; NOT HERE in C#;
                 RootOU = new DirectoryEntry
-                    ("LDAP://localhost:50000/CN=Users,CN=Users,DC=anakin,DC=local",
+                    ("LDAP://localhost:50001/CN=Users,CN=Users,DC=anakin,DC=local",
                     "Administrator",
                     "Student1",
                     AuthenticationTypes.Secure
@@ -123,7 +123,7 @@ namespace Lib
                 Console.WriteLine($"{objUser.SchemaClassName}: \"{objUser.Name}\" is found in the Container!");
 
                 objUser.Rename("CN="+newName);
-                objUser.Properties["displayname"][0] = $"{newName}";
+                objUser.Properties["displayname"][0] = $"{newName}"; 
 
                 objUser.UsePropertyCache = true;
                 objUser.CommitChanges();

@@ -41,7 +41,15 @@ namespace WpfApp1
         {
             fieldResults.Items.Clear();
             List<Users> l = Program.GetADUsers();
-            l.ForEach(x => fieldResults.Items.Add(x));
+            if (l != null)
+            {
+                l.ForEach(x => fieldResults.Items.Add(x));
+            }
+            else
+            {
+                MessageBox.Show("No Users found or Database not connected!");
+            }
+            
             btnCreateUser.IsEnabled = btnDeleteUser.IsEnabled = btnUpdateUser.IsEnabled = true;
         }
 
