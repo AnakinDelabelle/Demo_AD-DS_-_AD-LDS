@@ -161,7 +161,7 @@ namespace Lib
                         if (result.Properties.Contains("displayname"))
                         {
                             Users objSurveyUsers = new Users();
-                            objSurveyUsers.DisplayName = (String) result.Properties["displayname"][0];
+                            //objSurveyUsers.DisplayName = (String) result.Properties["displayname"][0];
                             lstADUsers.Add(objSurveyUsers);
 
                         }
