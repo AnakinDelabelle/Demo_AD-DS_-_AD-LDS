@@ -24,6 +24,7 @@ namespace Testing
 
             Console.WriteLine(overview);
 
+            return overview;
         }
 
         public void WriteXML()

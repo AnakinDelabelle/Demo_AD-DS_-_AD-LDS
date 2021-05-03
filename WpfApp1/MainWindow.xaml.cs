@@ -25,13 +25,13 @@ namespace WpfApp1
     /// </summary>
     public partial class MainWindow : Window
     {
-        public Program Program { get; set; }
+        public CRUD Program { get; set; }
 
         public MainWindow()
         {
             InitializeComponent();
 
-            Program = new Program();
+            Program = new CRUD();
             Program.Binding(Connection.LOCAL);
             lblCurrent.Content = "Current Connection: LOCAL";      //LOCAL or LDAP
             btnCreateUser.IsEnabled = btnDeleteUser.IsEnabled = btnUpdateUser.IsEnabled = false;
@@ -60,7 +60,7 @@ namespace WpfApp1
             w.ShowDialog();
             if (w.DialogResult == true)
             {
-                if (Program.CreateUser(w.Answer))
+                if (Program.CreateUser(new Users { UserData = new UserData { FirstName = w.Answer } }))
                 {
                     MessageBox.Show("User succesfully created!");
                     btnCreateUser.IsEnabled = btnDeleteUser.IsEnabled = btnUpdateUser.IsEnabled = false;
@@ -72,13 +72,13 @@ namespace WpfApp1
         {
             if (Program.Connection == Connection.LOCAL)
             {
-                Program = new Program();
+                Program = new CRUD();
                 Program.Binding(Connection.LDAP);
                 lblCurrent.Content = "Current Connection: LDAP";
             }
             else
             {
-                Program = new Program();
+                Program = new CRUD();
                 Program.Binding(Connection.LOCAL);
                 lblCurrent.Content = "Current Connection: LOCAL";
             }

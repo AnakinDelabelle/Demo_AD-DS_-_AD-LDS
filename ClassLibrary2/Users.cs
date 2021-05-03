@@ -13,6 +13,11 @@ namespace Lib
         [XmlElement("body")]
         public UserData UserData { get; set; }
 
+        public Users()
+        {
+            UserData = new UserData { FirstName = "", LastName = "", Email = "", Role = "" };
+        }
+
         public override string ToString()
         {
             return $"Account Name: {UserData.FirstName} {UserData.LastName} - {UserData.Email} - {UserData.Role}";
