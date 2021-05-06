@@ -15,7 +15,8 @@ namespace Lib
 
         public Users()
         {
-            UserData = new UserData { FirstName = "", LastName = "", Email = "", Role = "" };
+            UserData = new UserData { FirstName = "Not Set", LastName = "Not Set", Email = "Not Set", Role = "Not Set", Password = "Student1" };
+            MetaData = new MetaData { UUIDMaster = "Not Set", Methode = CRUDMethode.NOTSET, Origin = "Not Set", TimeStamp = DateTime.MinValue};
         }
 
         public override string ToString()
@@ -42,6 +43,8 @@ namespace Lib
         public string FirstName { get; set; }
         [XmlElement("lastname")]
         public string LastName { get; set; }
+        [XmlIgnore]
+        public string Password { get; set; }    
         [XmlElement("email")]
         public string Email { get; set; }
         [XmlElement("role")]
@@ -50,6 +53,6 @@ namespace Lib
 
     public enum CRUDMethode
     {
-        CREATE,UPDATE,DELETE
+        CREATE,UPDATE,DELETE,READ,NOTSET
     }
 }

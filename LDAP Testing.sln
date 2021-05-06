@@ -1,15 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.1500
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfApp1", "WpfApp1\WpfApp1.csproj", "{92F99DC9-CD1D-4772-AFC6-882DDFBB9983}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MainWindow", "WpfApp1\MainWindow.csproj", "{92F99DC9-CD1D-4772-AFC6-882DDFBB9983}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lib", "ClassLibrary2\Lib.csproj", "{E76CB009-BC21-4F6B-BF29-D145B7EF0391}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserWindow", "UserWindow\UserWindow.csproj", "{ACA01C7F-DBB5-4707-AFF6-DEF3C412922B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testing", "Testing\Testing.csproj", "{A7C90001-2EFC-43EF-B378-1139F9CD67D2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestENV", "TestENV\TestENV.csproj", "{9CB2B5E2-B105-4810-A97E-6DB9A1741FED}"
 EndProject
@@ -31,10 +29,6 @@ Global
 		{ACA01C7F-DBB5-4707-AFF6-DEF3C412922B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ACA01C7F-DBB5-4707-AFF6-DEF3C412922B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ACA01C7F-DBB5-4707-AFF6-DEF3C412922B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A7C90001-2EFC-43EF-B378-1139F9CD67D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A7C90001-2EFC-43EF-B378-1139F9CD67D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A7C90001-2EFC-43EF-B378-1139F9CD67D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A7C90001-2EFC-43EF-B378-1139F9CD67D2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9CB2B5E2-B105-4810-A97E-6DB9A1741FED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9CB2B5E2-B105-4810-A97E-6DB9A1741FED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9CB2B5E2-B105-4810-A97E-6DB9A1741FED}.Release|Any CPU.ActiveCfg = Release|Any CPU

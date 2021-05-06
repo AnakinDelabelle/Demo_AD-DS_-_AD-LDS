@@ -1,42 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
+using System.Xml.Schema;
 using System.Xml.Serialization;
 using Lib;
 
-namespace Testing
+namespace TestENV
 {
-    class XMLtoObject
+    public class XMLtoObject
     {
-        public Users User { get; set; }
-
-        public Users ReadXML()
+        public Users ReadandValidateXML(string xml)
         {
-            // Now we can read the serialized book ...  
-             XmlSerializer reader = new XmlSerializer(typeof(Users));
-            StreamReader file = new System.IO.StreamReader(
-                @"C:\Users\Administrator\Source\Repos\Demo_AD-DS_-_AD-LDS\Testing\xmlData\dummydata.xml");
-            Users overview = (Users)reader.Deserialize(file);
-            file.Close();
+            var schema = new XmlSchemaSet();
+            var xmlDoc = XDocument.Parse(xml, LoadOptions.SetLineInfo);
 
-            Console.WriteLine(overview);
+            schema.Add("", @"C:\Users\Administrator\Source\Repos\AnakinDelabelle\Demo_AD-DS_-_AD-LDS\TestENV\xmlData\xsdcontrole.xsd"); //Can change
 
-            return overview;
+            xmlDoc.Validate(schema, (sender, e) =>
+            {
+                Debug.WriteLine("XML is ongeldig");
+                throw new Exception();
+            });
+
+            Debug.WriteLine("XML is geldig");
+            var serializer = new XmlSerializer(typeof(Users));
+            var reader = new StringReader(xml);
+            var user = (Users)serializer.Deserialize(reader);
+
+            return user;
         }
 
-        public void WriteXML()
+        public string WriteXML(Users user)
         {
             // First write something so that there is something to read ...  
-            var user = new Users { UserData = new UserData { FirstName = "Anakin", LastName = "Delabelle", Email = "anakin.delabelle@student.ehb.be", Role = "student" } };
-            var writer = new XmlSerializer(typeof(Users));
-            var wfile = new StreamWriter(@"C:\Users\Administrator\Source\Repos\Demo_AD-DS_-_AD-LDS\Testing\xmlData\SerializationOverview.xml");
-            writer.Serialize(wfile, user);
-            wfile.Close();
+            //var user = new Users { UserData = new UserData { FirstName = "Anakin", LastName = "Delabelle", Email = "anakin.delabelle@student.ehb.be", Role = "student" } };
+            var serializer = new XmlSerializer(typeof(Users));
+            var writer = new StringWriter();
+
+            serializer.Serialize(writer, user);
+            Debug.WriteLine(writer.ToString());
+
+            return writer.ToString();
         }
-
-
     }
 }

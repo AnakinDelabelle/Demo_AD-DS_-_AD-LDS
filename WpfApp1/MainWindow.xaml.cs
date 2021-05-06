@@ -18,32 +18,33 @@ using Lib;
 using UserWindow;
 
 
-namespace WpfApp1
+namespace MainWindow
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class DemoWindow : Window
     {
         public CRUD Program { get; set; }
 
-        public MainWindow()
+        public DemoWindow()
         {
+
             InitializeComponent();
 
             Program = new CRUD();
             Program.Binding(Connection.LOCAL);
             lblCurrent.Content = "Current Connection: LOCAL";      //LOCAL or LDAP
-            btnCreateUser.IsEnabled = btnDeleteUser.IsEnabled = btnUpdateUser.IsEnabled = false;
+            btnCreateUser.IsEnabled = btnDeleteUser.IsEnabled = btnUpdateUser.IsEnabled = btnChangeConnection.IsEnabled = false;
         }
 
         private void GetAllUsersAction(object sender, RoutedEventArgs e)
         {
             fieldResults.Items.Clear();
-            List<Users> l = Program.GetADUsers();
+            List<String> l = Program.GetADUsers();
             if (l != null)
             {
-                l.ForEach(x => fieldResults.Items.Add(x));
+                l.ForEach(x => fieldResults.Items.Add($"CN={x}"));
             }
             else
             {
@@ -56,15 +57,23 @@ namespace WpfApp1
         private void CreateUserAction(object sender, RoutedEventArgs e)
         {
 
-            Dialoge w = new Dialoge("c");
+            Dialoge w = new Dialoge();
             w.ShowDialog();
             if (w.DialogResult == true)
             {
-                if (Program.CreateUser(new Users { UserData = new UserData { FirstName = w.Answer } }))
-                {
-                    MessageBox.Show("User succesfully created!");
-                    btnCreateUser.IsEnabled = btnDeleteUser.IsEnabled = btnUpdateUser.IsEnabled = false;
-                }
+                //try
+                //{
+                    if (Program.CreateUser(w.Answer))
+                    {
+                        MessageBox.Show("User succesfully created!");
+                        btnCreateUser.IsEnabled = btnDeleteUser.IsEnabled = btnUpdateUser.IsEnabled = false;
+                    }
+                //}
+                //catch (Exception ex)
+                //{
+                //    MessageBox.Show(ex.Message);
+                //}
+                
             }
         }
 
@@ -106,17 +115,24 @@ namespace WpfApp1
         {
             if (fieldResults.SelectedIndex != -1)
             {
-                Dialoge w = new Dialoge("u");
+                Dialoge w = new Dialoge(Program.FindADUser(fieldResults.SelectedValue.ToString()));
                 w.ShowDialog();
 
                 if (w.DialogResult == true)
                 {
-                    Debug.WriteLine(fieldResults.SelectedValue.ToString());
-                    if (Program.UpdateUser(fieldResults.SelectedValue.ToString(), w.Answer))
-                    {
-                        MessageBox.Show("User succesfully updated!");
-                        btnCreateUser.IsEnabled = btnDeleteUser.IsEnabled = btnUpdateUser.IsEnabled = false;
-                    }
+                    Debug.WriteLine(fieldResults.SelectedValue.ToString().Substring(9));
+                    //try
+                    //{
+                        if (Program.UpdateUser(fieldResults.SelectedValue.ToString(), w.Answer))
+                        {
+                            MessageBox.Show("User succesfully updated!");
+                            btnCreateUser.IsEnabled = btnDeleteUser.IsEnabled = btnUpdateUser.IsEnabled = false;
+                        }
+                    //}
+                    //catch (Exception ex)
+                    //{
+                    //    MessageBox.Show(ex.Message);
+                    //}
                 }
             }
             else

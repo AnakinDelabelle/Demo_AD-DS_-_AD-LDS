@@ -40,25 +40,12 @@ namespace Lib
 
         }
 
-        public static void Main(string[] args)
-        {
-            Debug.WriteLine("Start CRUD");
-            CRUD p = new CRUD();
-
-            Debug.WriteLine("Start binding with LDAP server");
-            p.Binding(Connection.LOCAL);
-
-            Debug.WriteLine("Create Test User");
-            p.CreateUser(new Users { UserData = new UserData { FirstName = "Test", LastName = "123" } });
-        }
-
 
         public bool CreateUser(Users user)
         {
 
 
-            try
-            {   //Create user info
+               //Create user info
                 DirectoryEntry objUser;
                 var objName = $"CN={user.UserData.FirstName} {user.UserData.LastName}";
                 var name = $"{user.UserData.FirstName} {user.UserData.LastName}";
@@ -67,63 +54,82 @@ namespace Lib
                 Searcher = new DirectorySearcher(RootOU);
                 Searcher.Filter = $"(&(objectCategory=Person)({objName}))";
 
+                Debug.WriteLine(Searcher.FindAll().Count);
                 if (Searcher.FindAll().Count != 0)
                 {
-                    throw new Exception();
+                    throw new Exception("User allready exists!");
                 }
 
-                //Create User object
-                //Set: GivenName, Name, CN,
-                //Not Set:  SN, sAMAccountName, Email, Role, DisplayName
-                objUser = RootOU.Children.Add(objName, "user");
+            //Create User object
+            //Set:  Name, CN,
+            //Not Set:  SN, sAMAccountName, Email, Role, GivenName, DisplayName
+            objUser = RootOU.Children.Add(objName, "user");
                 objUser.Properties["displayName"].Add(name);
+                objUser.Properties["givenName"].Add(user.UserData.FirstName);
                 objUser.Properties["sn"].Add(user.UserData.LastName);
-                objUser.Properties["mail"].Add(user.UserData.Email);
+                //objUser.Properties["mail"].Add(user.UserData.Email);
                 objUser.Properties["role"].Add(user.UserData.Role);
                 objUser.Properties["sAMAccountName"].Add($"{user.UserData.FirstName.ToLowerInvariant()}.{user.UserData.LastName.ToLowerInvariant()}");
-               
+                objUser.Properties["userPrincipalName"].Add($"{user.UserData.FirstName.ToLowerInvariant()}.{user.UserData.LastName.ToLowerInvariant().Replace(" ", ".")}@desideriushogeschool.be");
+                objUser.Properties["userPassword"].Add(user.UserData.Password);
 
-                Debug.WriteLine(objUser.Path);
+            //Enable Account -- Cannot change account state from another maschine
+            const int UF_ACCOUNTDISABLE = 0x0002;
+            const int UF_PASSWD_NOTREQD = 0x0020;
+            const int UF_PASSWD_CANT_CHANGE = 0x0040;
+            const int UF_NORMAL_ACCOUNT = 0x0200;
+            const int UF_DONT_EXPIRE_PASSWD = 0x10000;
+            const int UF_SMARTCARD_REQUIRED = 0x40000;
+            const int UF_PASSWORD_EXPIRED = 0x800000;
+
+            //objUser.Properties["userAccountControl"].Value = (UF_NORMAL_ACCOUNT);
+
+
+            Debug.WriteLine(objUser.Path);
                 objUser.CommitChanges();
 
                 Debug.WriteLine("User Creation Succeeded!");
                 return true;
-            }
-            catch (Exception)
-            {
-                throw new Exception();
-                
-            }
+            
+
         }
 
         public bool DeleteUser(string name)
         {
-            try
-            {
-                DirectoryEntry objUser = RootOU.Children.Find($"CN={name.Substring(14)}");
+                DirectoryEntry objUser = RootOU.Children.Find(name);
                 Console.WriteLine($"{objUser.SchemaClassName}: \"{objUser.Name}\" is found in the Container!");
                 RootOU.Children.Remove(objUser);
                 Console.WriteLine("User succesfully deleted!");
                 return true;
-            }
-            catch (Exception)
-            {
-
-                throw new Exception();
-            }
         }
 
-        public bool UpdateUser(Users user)
+        public Users FindADUser(string v)
         {
-            try
-            {
+            DirectoryEntry objUser = RootOU.Children.Find(v);
+
+            Users user = new Users();
+            user.UserData.FirstName = (String)objUser.Properties["givenname"].Value;
+            user.UserData.LastName = (String)objUser.Properties["sn"].Value;
+            user.UserData.Email = (String)objUser.Properties["userprincipalname"].Value;
+            user.UserData.Role = (String)objUser.Properties["role"].Value;
+            Debug.WriteLine("Password Length= " + objUser.Properties["userpassword"].Capacity);
+            user.UserData.Password = new String('*', objUser.Properties["userpassword"].Capacity);
+
+            return user;
+        }
+
+        public bool UpdateUser(string oldName, Users user)
+        {
+ 
                 Searcher = new DirectorySearcher(RootOU);
-                Searcher.Filter = $"(&(objectCategory=Person)(cn={user.UserData.FirstName} {user.UserData.LastName}))";
+                Searcher.Filter = $"(&(objectCategory=Person)({oldName}))";
 
                 Searcher.PropertiesToLoad.Add("displayname");
-                Searcher.PropertiesToLoad.Add("mail");
+                //Searcher.PropertiesToLoad.Add("mail");
                 Searcher.PropertiesToLoad.Add("role");
                 Searcher.PropertiesToLoad.Add("samaccountname");
+                Searcher.PropertiesToLoad.Add("userpassword");
+                Searcher.PropertiesToLoad.Add("userprincipalname");
                 Searcher.PropertiesToLoad.Add("sn");
                 Searcher.PropertiesToLoad.Add("cn");
                 Searcher.PropertiesToLoad.Add("givenname");
@@ -136,39 +142,46 @@ namespace Lib
                 var objName = $"CN={user.UserData.FirstName} {user.UserData.LastName}";
                 var name = $"{user.UserData.FirstName} {user.UserData.LastName}";
 
-                objUser.Rename(objName);
-                objUser.Properties["name"][0] = name;
-                objUser.Properties["givenname"][0] = user.UserData.FirstName;
-                objUser.Properties["displayName"][0] = name;
-                objUser.Properties["sn"][0] = user.UserData.LastName;
-                objUser.Properties["mail"][0] = user.UserData.Email;
-                objUser.Properties["role"][0] = user.UserData.Role;
-                objUser.Properties["sAMAccountName"][0] = $"{user.UserData.FirstName.ToLowerInvariant()}.{user.UserData.LastName.ToLowerInvariant()}";
+                Debug.WriteLine(user);
+                Debug.WriteLine(objUser.Properties["givenname"][0]);
 
+            objUser.Rename(objName);
+                //objUser.Properties["name"][0] = name; RDN Attribute
+                objUser.Properties["givenname"][0] = user.UserData.FirstName;
+                objUser.Properties["userPrincipalName"][0] = $"{(user.UserData.Email.Contains("@")? user.UserData.Email.Substring(0, user.UserData.Email.IndexOf("@")): user.UserData.Email)}@desideriushogeschool.be";
+                objUser.Properties["userPassword"][0] = user.UserData.Password;
+                objUser.Properties["displayName"][0] = name; //Multi
+                objUser.Properties["sn"][0] = user.UserData.LastName;
+                //objUser.Properties["mail"][0] = user.UserData.Email;
+                objUser.Properties["role"][0] = user.UserData.Role;
+                objUser.Properties["sAMAccountName"][0] = $"{user.UserData.FirstName.ToLowerInvariant()}.{user.UserData.LastName.ToLowerInvariant().Replace(" ", ".")}";
+
+            Debug.WriteLine(objUser.Properties["givenname"][0]);
 
                 objUser.UsePropertyCache = true;
+                
                 objUser.CommitChanges();
+                //objUser.RefreshCache();
 
-                Console.WriteLine("User succesfully updated!");
+            Debug.WriteLine(objUser.Properties["givenname"][0]);
+
+            Console.WriteLine("User succesfully updated!");
                 return true;
-            }
-            catch (Exception)
-            {
 
-                throw new Exception();
-            }
         }
 
-        public List<Users> GetADUsers()
+        public List<String> GetADUsers()
         {
-            try
-            {
-                List<Users> lstADUsers = new List<Users>();
+            
+            
+                List<String> lstADUsers = new List<String>();
 
                 Searcher = new DirectorySearcher(RootOU);
                 Searcher.Filter = "(&(objectCategory=Person)(objectClass=user))";
 
-                Searcher.PropertiesToLoad.Add("displayname");
+            Searcher.PropertiesToLoad.Add("cn");
+            Searcher.PropertiesToLoad.Add("givenname");
+                Searcher.PropertiesToLoad.Add("sn");
 
                 SearchResult result;
                 SearchResultCollection resultCol = Searcher.FindAll();
@@ -176,25 +189,17 @@ namespace Lib
                 {
                     for (int counter = 0; counter < resultCol.Count; counter++)
                     {
-                        string UserNameEmailString = string.Empty;
                         result = resultCol[counter];
+                        var res = result.GetDirectoryEntry();
 
-                        if (result.Properties.Contains("displayname"))
-                        {
-                            Users objSurveyUsers = new Users();
-                            objSurveyUsers.UserData.FirstName = (String) result.Properties["displayname"][0];
-                            lstADUsers.Add(objSurveyUsers);
-
-                        }
+                    if (result.Properties.Contains("givenname"))
+                    {
+                        lstADUsers.Add((String)res.Properties["cn"].Value);
                     }
                 }
+                }
                 return lstADUsers;
-            }
-
-            catch (Exception ex)
-            {
-                throw new Exception();
-            }
+            
         }
     }
 }
