@@ -21,7 +21,7 @@ namespace UserWindow
     /// </summary>
     public partial class Dialoge : Window
     {
-        public Users Answer { get { return new Users { UserData = new UserData { FirstName = txtFirstName.Text, LastName = txtLastName.Text, Email = txtEmail.Text, Role = (rdStudent.IsChecked == true)?"student":"docent", Password = txtPassword.Text } }; } }
+        public Users Answer { get { return new Users { UserData = new UserData { FirstName = txtFirstName.Text, LastName = txtLastName.Text, Email = txtEmail.Text, Role = (rdStudent.IsChecked == true)?"student":"docent", Password = txtPassword.Text} }; } }
 
         public Dialoge()
         {

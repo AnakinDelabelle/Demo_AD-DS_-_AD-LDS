@@ -71,9 +71,10 @@ namespace Lib
                 objUser.Properties["role"].Add(user.UserData.Role);
                 objUser.Properties["sAMAccountName"].Add($"{user.UserData.FirstName.ToLowerInvariant()}.{user.UserData.LastName.ToLowerInvariant()}");
                 objUser.Properties["userPrincipalName"].Add($"{user.UserData.FirstName.ToLowerInvariant()}.{user.UserData.LastName.ToLowerInvariant().Replace(" ", ".")}@desideriushogeschool.be");
-                objUser.Properties["userPassword"].Add(user.UserData.Password);
 
-            //Enable Account -- Cannot change account state from another maschine
+            objUser.Properties["userPassword"].Add(user.UserData.Password);
+
+            //Enable Account -- Cannot change account state from another machine
             const int UF_ACCOUNTDISABLE = 0x0002;
             const int UF_PASSWD_NOTREQD = 0x0020;
             const int UF_PASSWD_CANT_CHANGE = 0x0040;
@@ -149,7 +150,7 @@ namespace Lib
                 //objUser.Properties["name"][0] = name; RDN Attribute
                 objUser.Properties["givenname"][0] = user.UserData.FirstName;
                 objUser.Properties["userPrincipalName"][0] = $"{(user.UserData.Email.Contains("@")? user.UserData.Email.Substring(0, user.UserData.Email.IndexOf("@")): user.UserData.Email)}@desideriushogeschool.be";
-                objUser.Properties["userPassword"][0] = user.UserData.Password;
+                //objUser.Properties["userPassword"][0] = user.UserData.Password;
                 objUser.Properties["displayName"][0] = name; //Multi
                 objUser.Properties["sn"][0] = user.UserData.LastName;
                 //objUser.Properties["mail"][0] = user.UserData.Email;

@@ -33,6 +33,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -45,7 +47,7 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="XMLtoObject.cs" />
+    <Compile Include="XMLParser.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -58,10 +60,15 @@
       <Project>{e76cb009-bc21-4f6b-bf29-d145b7ef0391}</Project>
       <Name>Lib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\WpfApp1\MainWindow.csproj">
+      <Project>{92f99dc9-cd1d-4772-afc6-882ddfbb9983}</Project>
+      <Name>MainWindow</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="xmlData\dummydata.xml" />
     <Content Include="xmlData\SerializationOverview.xml" />
+    <Content Include="xmlData\UpdateDemo.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
