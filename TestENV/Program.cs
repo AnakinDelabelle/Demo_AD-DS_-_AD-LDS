@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Lib;
 using MainWindow;
+using RabbitMQ.Client;
 
 namespace TestENV
 {
@@ -14,8 +16,17 @@ namespace TestENV
     {
         static void Main(string[] args)
         {
+            var producer = new Producer();
+
+            //new Thread(new ThreadStart(() => {
+            //    var consumer = new Consumer();
+            //    consumer.ConsumeMessage();
+            //})).Start();
+            
+            var xmlParser = new XMLParser();
             //Demo User Creation
-            var demoUser = new Users {
+            var demoUser = new Users
+            {
                 UserData = new UserData
                 {
                     FirstName = "Demo",
@@ -33,14 +44,25 @@ namespace TestENV
                 }
             };
 
+
+
+            Console.WriteLine(" Press [enter] to proceed.");
+            Console.ReadLine();
+
+
+
             Console.WriteLine("===================User Creation================\n");
             Console.WriteLine(demoUser + "\n");
             Console.ReadLine();
 
-            Console.WriteLine("=================From Object to XML==============\n");
-            var xmlParser = new XMLParser();
+            Console.WriteLine("=================Produce on the QUEUE==============\n");
             var xmlString = xmlParser.WriteXMLfromObject(demoUser);
-            Console.WriteLine(xmlString + "\n");
+            producer.CreateMessage(xmlString+"\n");
+            
+
+            Console.WriteLine("=================Consume from the QUEUE==============\n");
+            //var xmlFromQueue = xmlParser.WriteXMLfromObject(demoUser);
+            //Console.WriteLine(xmlFromQueue);
             Console.ReadLine();
 
             Console.WriteLine("=================From XML to Object==============\n");
